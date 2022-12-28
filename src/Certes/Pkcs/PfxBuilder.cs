@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Certes.Crypto;
@@ -111,7 +112,7 @@ namespace Certes.Pkcs
                     Cert = cert
                 });
 
-            var rootCerts = new HashSet(certificates.Where(c => c.IsRoot).Select(c => new TrustAnchor(c.Cert, null)));
+            var rootCerts = new HashSet<TrustAnchor>(certificates.Where(c => c.IsRoot).Select(c => new TrustAnchor(c.Cert, null)));
             var intermediateCerts = certificates.Where(c => !c.IsRoot).Select(c => c.Cert).ToList();
             intermediateCerts.Add(certificate);
 
@@ -125,16 +126,18 @@ namespace Certes.Pkcs
                 IsRevocationEnabled = false
             };
 
-            builderParams.AddStore(
-                X509StoreFactory.Create(
-                    "Certificate/Collection",
-                    new X509CollectionStoreParameters(intermediateCerts)));
+            // builderParams.AddStore(
+            //     X509StoreFactory.Create(
+            //         "Certificate/Collection",
+            //         new X509CollectionStoreParameters(intermediateCerts)));
+            //TODO: SB 
+            throw new NotImplementedException(" upgrade this to bouncy-castle 2.0");
 
-            var builder = new PkixCertPathBuilder();
-            var result = builder.Build(builderParams);
+            // var builder = new PkixCertPathBuilder();
+            // var result = builder.Build(builderParams);
 
-            var fullChain = result.CertPath.Certificates.Cast<X509Certificate>().ToArray();
-            return fullChain;
+            // var fullChain = result.CertPath.Certificates.Cast<X509Certificate>().ToArray();
+            // return fullChain;
         }
 
         private AsymmetricCipherKeyPair LoadKeyPair()
